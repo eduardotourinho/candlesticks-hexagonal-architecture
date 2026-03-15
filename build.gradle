@@ -5,7 +5,7 @@ plugins {
     id "io.freefair.lombok" version "8.0.1"
 }
 
-group = 'com.traderepublic.candlesticks'
+group = 'dev.eduardotourinho.hexagonalarchitecture'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
