@@ -1,16 +1,16 @@
-# Candlestick challenge
+# Hexagonal Architecture showcase
 
-This is the implementation of the candlestick challenge, described in this [README.md](docs%2FREADME.md)
+
 
 ## Content
 
 - [Tech stack](#tech-stack)
 - [Assumptions](#assumptions)
-- [Future improvement](#future-improvements)
-- [Tests](#tests)
 - [Code Architecture](#code-architecture)
 - [Running the Partner Service](#running-the-partner-service)
 - [Running the app](#running-the-app)
+- [TODO](#todo)
+- [Tests](#tests)
 
 ## Tech stack
 
@@ -30,26 +30,6 @@ The tech stack used to implement this challenge is:
 - All timestamps are saved and returned with UTC offset; 
 - Candlesticks for the current minute are not returned (i.e if someone makes request at "12:02", the last returned candlesticks will be from the `openingTimestamp` "12:01");
 
-
-## Future improvements
-
-- Proper error handling
-- Use a NoSQL instead of SQL database
-- Pre-calculate the candlesticks instead of calculating them on real-time 
-- Add a caching layer
-- Stream the events (i.e. using Kafka, SQS) received through the websocket
-- Use gRPC instead of WebSocket to communicate with the `Partner` service (if possible)
-
-## Tests
-
-All the test were implemented considering only the "happy-path" of the application. There are some tests for some exceptions, however it needs to be improved.
-
-Before deploying to production, we MUST implement all the missing tests for this (i.e. handling exceptions, integration tests for websocket, and others.
-
-### Missing tests
-
-- General error handling. 
-- `websocket` adapter tests.
 
 ## Code Architecture
 
@@ -86,11 +66,21 @@ To run the app you can use the following gradle commands
 ./gradlew bootRun
 ```
 
-### IntelliJ
-If you want to use `IntelliJ` to run the application, run the file [TradeRepublicCandlesticksApplication.java](src%2Fmain%2Fjava%2Fcom%2Ftraderepublic%2FTradeRepublicCandlesticksApplication.java)
+## TODO
 
-Once the server is running you can check the results at
-```
-http://localhost:8080/candlesticks?isin={ISIN}
-```
+- Proper error handling
+- Use a NoSQL instead of SQL database
+- Pre-calculate the candlesticks instead of calculating them on real-time
+- Add a caching layer
+- Stream the events (i.e. using Kafka, SQS) received through the websocket
+- Use gRPC instead of WebSocket to communicate with the `Partner` service (if possible)
 
+## Tests
+
+All the test were implemented considering only the "happy-path" of the application. There are some tests for some exceptions, however it needs to be improved.
+Before deploying to production, we MUST implement all the missing tests for this (i.e. handling exceptions, integration tests for websocket, and others.
+
+### Missing tests
+
+- General error handling.
+- `websocket` adapter tests.
