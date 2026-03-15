@@ -52,7 +52,7 @@ class CandlestickControllerIntegrationTest {
                         .build()
         );
 
-        when(aggregateCandlesticksMock.getCandlesticks("ABC"))
+        when(aggregateCandlesticksMock.getCandlesticks("US0378331005"))
                 .thenReturn(candlesticks);
     }
 
@@ -77,7 +77,7 @@ class CandlestickControllerIntegrationTest {
                         .build()
         );
 
-        var response = restTemplate.getForEntity(url("/candlesticks?isin=ABC"), CandlestickResponse.class);
+        var response = restTemplate.getForEntity(url("/candlesticks?isin=US0378331005"), CandlestickResponse.class);
 
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
