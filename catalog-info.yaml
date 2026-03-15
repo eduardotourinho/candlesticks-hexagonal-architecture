@@ -1,4 +1,18 @@
 apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: candlestick-platform
+  description: Platform for real-time financial instrument candlestick aggregation.
+  annotations:
+    github.com/project-slug: eduardotourinho/trade-republic-candlesticks
+  tags:
+    - java
+    - spring-boot
+    - hexagonal-architecture
+spec:
+  owner: user:default/eduardo-tourinho
+---
+apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: candlesticks
@@ -6,6 +20,8 @@ metadata:
   annotations:
     github.com/project-slug: eduardotourinho/trade-republic-candlesticks
     backstage.io/techdocs-ref: dir:.
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/actuator/prometheus"
   links:
     - url: https://github.com/eduardotourinho/trade-republic-candlesticks
       title: GitHub
@@ -20,8 +36,11 @@ spec:
   type: service
   owner: user:default/eduardo-tourinho
   lifecycle: experimental
+  system: candlestick-platform
   providesApis:
     - candlesticks-api
+  consumesApis:
+    - partner-streams-api
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
@@ -35,6 +54,7 @@ spec:
   type: openapi
   lifecycle: experimental
   owner: user:default/eduardo-tourinho
+  system: candlestick-platform
   definition: |
     openapi: "3.0.0"
     info:
@@ -111,3 +131,74 @@ spec:
             message:
               type: string
               example: "Instrument not found: US0378331005"
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: partner-streams-api
+  description: WebSocket streams provided by the partner service, delivering real-time instrument lifecycle events and quote price updates.
+  tags:
+    - websocket
+    - asyncapi
+spec:
+  type: asyncapi
+  lifecycle: experimental
+  owner: user:default/eduardo-tourinho
+  system: candlestick-platform
+  definition: |
+    asyncapi: "2.6.0"
+    info:
+      title: Partner Streams API
+      version: "1.0"
+    servers:
+      partner:
+        url: ws://localhost:8032
+        protocol: ws
+    channels:
+      /instruments:
+        description: Instrument lifecycle events (ADD/DELETE).
+        subscribe:
+          message:
+            oneOf:
+              - name: AddInstrumentEvent
+                payload:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum: [ADD]
+                    data:
+                      type: object
+                      properties:
+                        isin:
+                          type: string
+                        description:
+                          type: string
+              - name: DeleteInstrumentEvent
+                payload:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum: [DELETE]
+                    data:
+                      type: object
+                      properties:
+                        isin:
+                          type: string
+      /quotes:
+        description: Real-time instrument price quote events.
+        subscribe:
+          message:
+            name: QuoteEvent
+            payload:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    isin:
+                      type: string
+                    price:
+                      type: number
+                      format: double
