@@ -27,16 +27,18 @@ public class InstrumentStreamHandler extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(@NonNull WebSocketSession session, @Nonnull TextMessage message) throws Exception {
-        var instrumentEvent = objectMapper.readValue(message.getPayload(), InstrumentEvent.class);
-        log.debug("InstrumentEvent: {}", instrumentEvent);
+    protected void handleTextMessage(@NonNull WebSocketSession session, @Nonnull TextMessage message) {
+        try {
+            var instrumentEvent = objectMapper.readValue(message.getPayload(), InstrumentEvent.class);
+            log.debug("InstrumentEvent: {}", instrumentEvent);
 
-        if (instrumentEvent.type() == InstrumentEvent.InstrumentType.ADD) {
-            instrumentManager.addInstrument(instrumentEvent.data().isin(), instrumentEvent.data().description());
-        } else if (instrumentEvent.type() == InstrumentEvent.InstrumentType.DELETE) {
-            instrumentManager.deleteInstrument(instrumentEvent.data().isin());
-        } else {
-            log.error("Unknown event type");
+            switch (instrumentEvent.type()) {
+                case ADD -> instrumentManager.addInstrument(instrumentEvent.data().isin(), instrumentEvent.data().description());
+                case DELETE -> instrumentManager.deleteInstrument(instrumentEvent.data().isin());
+                default -> log.warn("Unknown instrument event type: {}", instrumentEvent.type());
+            }
+        } catch (Exception e) {
+            log.error("Failed to process instrument event: {}", e.getMessage());
         }
     }
 }

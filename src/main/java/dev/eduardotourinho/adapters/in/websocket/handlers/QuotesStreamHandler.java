@@ -25,10 +25,14 @@ public class QuotesStreamHandler extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(@NonNull WebSocketSession session, TextMessage message) throws Exception {
-        var quoteEvent = objectMapper.readValue(message.getPayload(), QuoteEvent.class);
-        log.debug("QuoteEvent: {}", quoteEvent);
+    protected void handleTextMessage(@NonNull WebSocketSession session, TextMessage message) {
+        try {
+            var quoteEvent = objectMapper.readValue(message.getPayload(), QuoteEvent.class);
+            log.debug("QuoteEvent: {}", quoteEvent);
 
-        quoteManager.saveQuote(quoteEvent.data().isin(), quoteEvent.data().price());
+            quoteManager.saveQuote(quoteEvent.data().isin(), quoteEvent.data().price());
+        } catch (Exception e) {
+            log.error("Failed to process quote event: {}", e.getMessage());
+        }
     }
 }
