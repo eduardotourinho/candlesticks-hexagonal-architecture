@@ -1,4 +1,4 @@
-package dev.eduardotourinho.adapters.in.rest;
+thanpackage dev.eduardotourinho.adapters.in.rest;
 
 import dev.eduardotourinho.adapters.in.rest.models.CandlestickResponse;
 import dev.eduardotourinho.application.models.Candlestick;
