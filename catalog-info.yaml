@@ -1,0 +1,113 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: candlesticks
+  description: Candlestick aggregation service demonstrating hexagonal architecture, consuming real-time instrument and quote streams via WebSocket and exposing OHLC candlesticks via REST.
+  annotations:
+    github.com/project-slug: eduardotourinho/trade-republic-candlesticks
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - url: https://github.com/eduardotourinho/trade-republic-candlesticks
+      title: GitHub
+      icon: github
+  tags:
+    - java
+    - spring-boot
+    - hexagonal-architecture
+    - websocket
+    - h2
+spec:
+  type: service
+  owner: user:default/eduardo-tourinho
+  lifecycle: experimental
+  providesApis:
+    - candlesticks-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: candlesticks-api
+  description: REST API for retrieving OHLC candlestick aggregations for a given instrument (ISIN) over the past 30 minutes.
+  tags:
+    - rest
+    - openapi
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: user:default/eduardo-tourinho
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Candlesticks API
+      version: "1.0"
+    paths:
+      /candlesticks:
+        get:
+          summary: Get candlesticks for an instrument
+          operationId: getCandlesticks
+          parameters:
+            - name: isin
+              in: query
+              required: true
+              description: ISIN of the instrument (e.g. US0378331005)
+              schema:
+                type: string
+                pattern: '^[A-Z]{2}[A-Z0-9]{9}[0-9]$'
+          responses:
+            "200":
+              description: Candlestick aggregations for the past 30 minutes
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/CandlestickResponse'
+            "400":
+              description: Invalid ISIN format
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorResponse'
+            "404":
+              description: Instrument not found
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorResponse'
+    components:
+      schemas:
+        CandlestickResponse:
+          type: object
+          properties:
+            candlesticks:
+              type: array
+              items:
+                $ref: '#/components/schemas/Candlestick'
+        Candlestick:
+          type: object
+          properties:
+            openTimestamp:
+              type: string
+              example: "2023-04-21 13:04:00"
+            closeTimestamp:
+              type: string
+              example: "13:05:00"
+            openPrice:
+              type: number
+              format: double
+            closingPrice:
+              type: number
+              format: double
+            highPrice:
+              type: number
+              format: double
+            lowPrice:
+              type: number
+              format: double
+        ErrorResponse:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "INSTRUMENT_NOT_FOUND"
+            message:
+              type: string
+              example: "Instrument not found: US0378331005"
