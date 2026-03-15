@@ -12,6 +12,15 @@ spring:
     hibernate:
       ddl-auto: update
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+
 candlesticks:
   aggregation-timeframe-minutes: 30
 
