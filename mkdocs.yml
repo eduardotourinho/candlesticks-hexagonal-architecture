@@ -6,4 +6,3 @@ nav:
   - Requirements: requirements.md
 plugins:
   - techdocs-core
-  - mermaid2
