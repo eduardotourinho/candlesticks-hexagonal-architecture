@@ -15,7 +15,7 @@ public class ResponseMapper {
                 .openTimestamp(DateTimeFormatter.ISO_INSTANT.format(candlestick.openTimestamp().atOffset(ZoneOffset.UTC)))
                 .closeTimestamp(DateTimeFormatter.ISO_INSTANT.format(candlestick.closeTimestamp().atOffset(ZoneOffset.UTC)))
                 .openPrice(roundValue(candlestick.openPrice()))
-                .closingPrice(roundValue(candlestick.closingPrice()))
+                .closePrice(roundValue(candlestick.closePrice()))
                 .highPrice(roundValue(candlestick.highPrice()))
                 .lowPrice(roundValue(candlestick.lowPrice()))
                 .build();

@@ -9,7 +9,7 @@ public record Candlestick(
         Instant openTimestamp,
         Instant closeTimestamp,
         Double openPrice,
-        Double closingPrice,
+        Double closePrice,
         Double highPrice,
         Double lowPrice) {
 

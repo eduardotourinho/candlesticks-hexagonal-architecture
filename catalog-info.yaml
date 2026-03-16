@@ -132,7 +132,7 @@ spec:
             openPrice:
               type: number
               format: double
-            closingPrice:
+            closePrice:
               type: number
               format: double
             highPrice:
