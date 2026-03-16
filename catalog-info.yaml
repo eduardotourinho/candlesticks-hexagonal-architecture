@@ -4,7 +4,7 @@ metadata:
   name: candlestick-platform
   description: Platform for real-time financial instrument candlestick aggregation.
   annotations:
-    github.com/project-slug: eduardotourinho/trade-republic-candlesticks
+    github.com/project-slug: eduardotourinho/candlesticks-hexagonal-architecture
   tags:
     - java
     - spring-boot
@@ -18,12 +18,13 @@ metadata:
   name: candlesticks
   description: Candlestick aggregation service demonstrating hexagonal architecture, consuming real-time instrument and quote streams via WebSocket and exposing OHLC candlesticks via REST.
   annotations:
-    github.com/project-slug: eduardotourinho/trade-republic-candlesticks
+    github.com/project-slug: eduardotourinho/candlesticks-hexagonal-architecture
     backstage.io/techdocs-ref: dir:.
     prometheus.io/scrape: "true"
     prometheus.io/path: "/actuator/prometheus"
+    prometheus.io/port: "8080"
   links:
-    - url: https://github.com/eduardotourinho/trade-republic-candlesticks
+    - url: https://github.com/eduardotourinho/candlesticks-hexagonal-architecture
       title: GitHub
       icon: github
   tags:
@@ -37,10 +38,26 @@ spec:
   owner: user:default/eduardo-tourinho
   lifecycle: experimental
   system: candlestick-platform
+  dependsOn:
+    - resource:default/candlestick-db
   providesApis:
     - candlesticks-api
   consumesApis:
     - partner-streams-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: candlestick-db
+  description: Embedded H2 database storing instruments and their quote history for candlestick aggregation.
+  tags:
+    - h2
+    - sql
+    - embedded
+spec:
+  type: database
+  owner: user:default/eduardo-tourinho
+  system: candlestick-platform
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
@@ -106,10 +123,12 @@ spec:
           properties:
             openTimestamp:
               type: string
-              example: "2023-04-21 13:04:00"
+              format: date-time
+              example: "2023-04-21T13:04:00Z"
             closeTimestamp:
               type: string
-              example: "13:05:00"
+              format: date-time
+              example: "2023-04-21T13:05:00Z"
             openPrice:
               type: number
               format: double

@@ -1,86 +1,81 @@
-# Hexagonal Architecture showcase
+# Candlesticks — Hexagonal Architecture Showcase
 
-
+A portfolio project demonstrating **Hexagonal Architecture** (Ports & Adapters) in a real-time financial data service. The service consumes live instrument and quote WebSocket streams from a partner service, persists them in an embedded H2 database, and exposes OHLC candlestick aggregations via REST.
 
 ## Content
 
 - [Tech stack](#tech-stack)
-- [Assumptions](#assumptions)
-- [Code Architecture](#code-architecture)
+- [Architecture](#architecture)
+- [Design decisions](#design-decisions)
 - [Running the Partner Service](#running-the-partner-service)
 - [Running the app](#running-the-app)
-- [TODO](#todo)
 - [Tests](#tests)
 
 ## Tech stack
 
-The tech stack used to implement this challenge is:
-
 - Java 17
-- Springboot 3.0.5
-- H2 embedded DB
+- Spring Boot 3.0.5
+- H2 embedded database
+- Flyway (schema migrations)
 - Lombok
+- Spring Boot Actuator + Micrometer (Prometheus metrics at `/actuator/prometheus`)
+- Backstage catalog (`catalog-info.yaml`)
 
-## Assumptions
+## Architecture
 
-- The system will return at most 30 candlesticks. If we only have quotes for a given ISIN for the past 10 minutes, it will return only 10 candlesticks. However, the gaps between the first candlestick timestamp and the last timestamp are filled, according the requirements;
-- The number of requests to get the candlesticks initially will be small enough, so we can aggregate the data in real-time;
-- The deleted `Instruments` and its `Quotes` history are no longer needed so we can physically delete them from the database;
-- All values are displayed with 2 decimal places;
-- All timestamps are saved and returned with UTC offset; 
-- Candlesticks for the current minute are not returned (i.e if someone makes request at "12:02", the last returned candlesticks will be from the `openingTimestamp` "12:01");
+The project follows Hexagonal Architecture, separating business logic from infrastructure concerns:
 
+- **`application/`** — domain models, use case ports (`in/` and `out/`), and service implementations. Has no dependency on frameworks or infrastructure.
+- **`adapters/in/`** — driving adapters: REST controller and WebSocket stream handlers.
+- **`adapters/out/`** — driven adapters: JPA repositories for instrument and quote persistence.
 
-## Code Architecture
-
-The code is organized based on the Hexagonal architecture:
-
-- `adapters` are the implementation for the external dependencies of the application (i.e. Database, Rest request, Websocket communication)
-- `application` contains the business logic for the application. The communication with external dependencies are done through the defined `ports`.
+Communication between the application core and adapters is done exclusively through the defined ports, making each adapter independently replaceable.
 
 ### Simplified View
 
 ![Candlesticks hexagonal design.jpg](docs%2FCandlesticks%20hexagonal%20design.jpg)
 
+## Design decisions
+
+- **Real-time aggregation** — candlesticks are aggregated on request rather than pre-calculated, given the assumed low initial request volume.
+- **Gap filling** — if no quotes exist for a given minute within the window, that minute is filled with the closing price of the most recent preceding minute. Implemented recursively in `CandlestickService`.
+- **30-minute rolling window** — the API returns at most 30 candlesticks. If quotes only exist for a subset of that window, only those minutes are returned.
+- **Current minute excluded** — candlesticks for the ongoing minute are not returned, as the window is not yet closed.
+- **Cascading deletes** — when an instrument is deleted, its quote history is physically removed from the database.
+- **All timestamps in UTC** — stored and returned as ISO 8601 with `Z` suffix.
+- **Prices rounded to 2 decimal places.**
+
 ## Running the Partner Service
 
-To run a partner service you can either use docker-compose. Docker v3 or above will require slight changes to the docker-compose files.
-``` 
+The partner service streams instrument and quote events over WebSocket. Start it before the application.
+
+Using Docker:
+```
 cd partner-server
 docker-compose up -d
 ```
-or Java
+
+Using Java:
 ```
 java -jar partner-service-1.0.1-all.jar --port=8032
 ```
 
 ## Running the app
 
-You need to start the `partner-server` first, before running the application 
-
-### Gradle
-To run the app you can use the following gradle commands
 ```
-./gradlew build
-./gradlew test
 ./gradlew bootRun
 ```
 
-## TODO
+The REST API is available at `http://localhost:8080/candlesticks?isin={ISIN}`.
 
-- Proper error handling
-- Use a NoSQL instead of SQL database
-- Pre-calculate the candlesticks instead of calculating them on real-time
-- Add a caching layer
-- Stream the events (i.e. using Kafka, SQS) received through the websocket
-- Use gRPC instead of WebSocket to communicate with the `Partner` service (if possible)
+Health and metrics endpoints are exposed via Spring Boot Actuator:
+- `GET /actuator/health`
+- `GET /actuator/prometheus`
 
 ## Tests
 
-All the test were implemented considering only the "happy-path" of the application. There are some tests for some exceptions, however it needs to be improved.
-Before deploying to production, we MUST implement all the missing tests for this (i.e. handling exceptions, integration tests for websocket, and others.
+```
+./gradlew test
+```
 
-### Missing tests
-
-- General error handling.
-- `websocket` adapter tests.
+Tests cover the application service layer, REST controller (integration), WebSocket stream handlers, and storage adapters. The controller integration tests use a mocked use case to verify request validation, response mapping, and error handling in isolation.
