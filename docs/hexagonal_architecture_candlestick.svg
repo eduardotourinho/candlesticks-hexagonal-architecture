@@ -1,0 +1,164 @@
+<svg width="1200" height="840" viewBox="0 0 1200 840" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <style>
+    text { font-family: system-ui, -apple-system, sans-serif; }
+    .th  { font-size: 13px; font-weight: 500; fill: #1a1a18; }
+    .ts  { font-size: 11px; font-weight: 400; fill: #5f5e5a; }
+    .tb  { fill: #0C447C; } .tb2 { fill: #185FA5; }
+    .tt  { fill: #085041; }
+    .tp  { fill: #3C3489; }
+    .tg  { fill: #444441; }
+    .tc  { fill: #712B13; } .tc2 { fill: #993C1D; }
+    .edge { fill: none; stroke: rgba(0,0,0,0.28); stroke-width: 1; }
+    .dash { stroke-dasharray: 5 3; fill: none; stroke: rgba(0,0,0,0.22); stroke-width: 0.5; }
+    .appbdr { fill: none; stroke: rgba(0,0,0,0.38); stroke-width: 1.2; stroke-dasharray: 6 3; }
+  </style>
+</defs>
+
+<rect width="1200" height="840" fill="#ffffff"/>
+
+<!-- Application boundary -->
+<rect class="appbdr" x="528" y="18" width="664" height="660" rx="14"/>
+<text class="th" x="860" y="38" text-anchor="middle" dominant-baseline="central">Application</text>
+
+<!-- Actors -->
+<rect x="20" y="96" width="96" height="52" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="th tb" x="68" y="117" text-anchor="middle" dominant-baseline="central">User</text>
+<text class="ts tb2" x="68" y="136" text-anchor="middle" dominant-baseline="central">REST</text>
+
+<rect x="20" y="356" width="96" height="52" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="th tb" x="68" y="374" text-anchor="middle" dominant-baseline="central">Partner</text>
+<text class="ts tb2" x="68" y="393" text-anchor="middle" dominant-baseline="central">WebSocket</text>
+
+<!-- REST adapter (in) -->
+<rect class="dash" x="266" y="66" width="244" height="204" rx="10"/>
+<text class="ts" x="388" y="82" text-anchor="middle" dominant-baseline="central">REST adapter (in)</text>
+<rect x="278" y="94"  width="220" height="40" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text class="th tt" x="388" y="114" text-anchor="middle" dominant-baseline="central">CandlestickController</text>
+<rect x="278" y="146" width="220" height="40" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text class="th tt" x="388" y="166" text-anchor="middle" dominant-baseline="central">ResponseMapper</text>
+<rect x="278" y="198" width="220" height="40" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text class="th tt" x="388" y="218" text-anchor="middle" dominant-baseline="central">GlobalExceptionHandler</text>
+
+<!-- WebSocket adapter (in) -->
+<rect class="dash" x="266" y="316" width="244" height="204" rx="10"/>
+<text class="ts" x="388" y="332" text-anchor="middle" dominant-baseline="central">WebSocket adapter (in)</text>
+<rect x="278" y="348" width="220" height="40" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text class="th tt" x="388" y="368" text-anchor="middle" dominant-baseline="central">InstrumentStreamHandler</text>
+<rect x="278" y="400" width="220" height="40" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text class="th tt" x="388" y="420" text-anchor="middle" dominant-baseline="central">QuotesStreamHandler</text>
+
+<!-- Ports (in) -->
+<rect class="dash" x="540" y="50" width="220" height="630" rx="10"/>
+<text class="ts" x="650" y="66" text-anchor="middle" dominant-baseline="central">Ports (in)</text>
+<rect x="552" y="88"  width="196" height="40" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text class="th tp" x="650" y="108" text-anchor="middle" dominant-baseline="central">FindCandlesticksUseCase</text>
+<rect x="552" y="344" width="196" height="40" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text class="th tp" x="650" y="364" text-anchor="middle" dominant-baseline="central">ManageInstrumentUseCase</text>
+<rect x="552" y="400" width="196" height="40" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text class="th tp" x="650" y="420" text-anchor="middle" dominant-baseline="central">ManageQuoteUseCase</text>
+
+<!-- Services -->
+<rect class="dash" x="778" y="50" width="196" height="630" rx="10"/>
+<text class="ts" x="876" y="66" text-anchor="middle" dominant-baseline="central">Services</text>
+<rect x="790" y="88"  width="172" height="40" rx="6" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text class="th tg" x="876" y="108" text-anchor="middle" dominant-baseline="central">CandlestickService</text>
+<rect x="790" y="280" width="172" height="40" rx="6" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text class="th tg" x="876" y="300" text-anchor="middle" dominant-baseline="central">CandlestickFactory</text>
+<rect x="790" y="370" width="172" height="40" rx="6" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text class="th tg" x="876" y="390" text-anchor="middle" dominant-baseline="central">InstrumentManager</text>
+
+<!-- Ports (out) -->
+<rect class="dash" x="992" y="50" width="200" height="630" rx="10"/>
+<text class="ts" x="1092" y="66" text-anchor="middle" dominant-baseline="central">Ports (out)</text>
+<rect x="1004" y="88"  width="176" height="40" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text class="th tp" x="1092" y="108" text-anchor="middle" dominant-baseline="central">QuoteFinderPort</text>
+<rect x="1004" y="344" width="176" height="40" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text class="th tp" x="1092" y="364" text-anchor="middle" dominant-baseline="central">InstrumentManagerPort</text>
+<rect x="1004" y="400" width="176" height="40" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text class="th tp" x="1092" y="420" text-anchor="middle" dominant-baseline="central">QuoteManagerPort</text>
+
+<!-- Storage adapter (out) -->
+<rect class="dash" x="928" y="716" width="264" height="96" rx="10"/>
+<text class="ts" x="1060" y="732" text-anchor="middle" dominant-baseline="central">Storage adapter (out)</text>
+<rect x="940" y="744" width="224" height="40" rx="6" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
+<text class="th tc" x="1052" y="764" text-anchor="middle" dominant-baseline="central">InstrumentStorageManager</text>
+<rect x="940" y="796" width="80" height="32" rx="6" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
+<text class="th tc" x="980" y="807" text-anchor="middle" dominant-baseline="central">H2</text>
+<text class="ts tc2" x="980" y="821" text-anchor="middle" dominant-baseline="central">Embedded DB</text>
+
+<!-- ARROWS -->
+
+<!-- User → Controller -->
+<path class="edge" d="M116 110 L191 110 L191 94 L276 94" marker-end="url(#arr)"/>
+<text class="ts" x="191" y="101" text-anchor="middle" dominant-baseline="central">GET /candlesticks?isin=</text>
+
+<!-- Partner → InstrumentStreamHandler -->
+<path class="edge" d="M116 368 L276 368" marker-end="url(#arr)"/>
+<text class="ts" x="196" y="359" text-anchor="middle" dominant-baseline="central">ws /instruments</text>
+
+<!-- Partner → QuotesStreamHandler -->
+<path class="edge" d="M116 382 L180 382 L180 420 L276 420" marker-end="url(#arr)"/>
+<text class="ts" x="196" y="432" text-anchor="middle" dominant-baseline="central">ws /quotes</text>
+
+<!-- Controller → FindCandlesticksUseCase -->
+<path class="edge" d="M498 114 L550 108" marker-end="url(#arr)"/>
+
+<!-- InstrumentStreamHandler → ManageInstrumentUseCase -->
+<path class="edge" d="M498 368 L550 364" marker-end="url(#arr)"/>
+
+<!-- QuotesStreamHandler → ManageQuoteUseCase -->
+<path class="edge" d="M498 420 L550 420" marker-end="url(#arr)"/>
+
+<!-- FindCandlesticksUseCase → CandlestickService -->
+<path class="edge" d="M748 108 L788 108" marker-end="url(#arr)"/>
+
+<!-- CandlestickService → CandlestickFactory -->
+<path class="edge" d="M876 128 L876 278" marker-end="url(#arr)"/>
+
+<!-- CandlestickService → QuoteFinderPort -->
+<path class="edge" d="M962 108 L1002 108" marker-end="url(#arr)"/>
+
+<!-- ManageInstrumentUseCase → InstrumentManager -->
+<path class="edge" d="M748 364 L788 380" marker-end="url(#arr)"/>
+
+<!-- ManageQuoteUseCase → InstrumentManager -->
+<path class="edge" d="M748 420 L788 393" marker-end="url(#arr)"/>
+
+<!-- InstrumentManager → InstrumentManagerPort -->
+<path class="edge" d="M962 374 L1002 364" marker-end="url(#arr)"/>
+
+<!-- InstrumentManager → QuoteManagerPort -->
+<path class="edge" d="M962 390 L1002 410" marker-end="url(#arr)"/>
+
+<!-- Ports-out → Storage -->
+<path class="edge" d="M1092 128 L1092 680 L1052 742" marker-end="url(#arr)"/>
+<path class="edge" d="M1170 364 L1170 700 L1092 700 L1052 742" marker-end="url(#arr)"/>
+<path class="edge" d="M1170 420 L1170 700"/>
+
+<!-- InstrumentStorageManager → H2 -->
+<path class="edge" d="M980 784 L980 794" marker-end="url(#arr)"/>
+
+<!-- LEGEND -->
+<rect x="20" y="716" width="500" height="96" rx="10" fill="#f5f5f0" stroke="rgba(0,0,0,0.12)" stroke-width="0.5"/>
+<text class="th" x="260" y="736" text-anchor="middle" dominant-baseline="central">Legend</text>
+
+<rect x="32"  y="752" width="14" height="14" rx="3" fill="#E6F1FB" stroke="#185FA5" stroke-width="1"/>
+<text class="ts" x="52"  y="759" dominant-baseline="central">Actors</text>
+<rect x="112" y="752" width="14" height="14" rx="3" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text class="ts" x="132" y="759" dominant-baseline="central">Adapters</text>
+<rect x="210" y="752" width="14" height="14" rx="3" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text class="ts" x="230" y="759" dominant-baseline="central">Ports</text>
+<rect x="284" y="752" width="14" height="14" rx="3" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="1"/>
+<text class="ts" x="304" y="759" dominant-baseline="central">Services</text>
+<rect x="374" y="752" width="14" height="14" rx="3" fill="#FAECE7" stroke="#993C1D" stroke-width="1"/>
+<text class="ts" x="394" y="759" dominant-baseline="central">Storage</text>
+
+<line x1="32"  y1="790" x2="90"  y2="790" stroke="rgba(0,0,0,0.22)" stroke-width="0.5" stroke-dasharray="5 3"/>
+<text class="ts" x="98"  y="790" dominant-baseline="central">Subsystem boundary</text>
+<line x1="270" y1="790" x2="328" y2="790" stroke="rgba(0,0,0,0.38)" stroke-width="1.2" stroke-dasharray="6 3"/>
+<text class="ts" x="336" y="790" dominant-baseline="central">Application boundary</text>
+</svg>
