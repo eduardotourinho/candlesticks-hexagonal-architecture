@@ -33,7 +33,7 @@ Communication between the application core and adapters is done exclusively thro
 
 ### Simplified View
 
-![Candlesticks hexagonal design.jpg](docs%2FCandlesticks%20hexagonal%20design.jpg)
+See [docs/architecture.md](docs/architecture.md) for the full diagram.
 
 ## Design decisions
 
