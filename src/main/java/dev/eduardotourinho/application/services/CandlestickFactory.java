@@ -42,7 +42,7 @@ public class CandlestickFactory {
                 .openTimestamp(openTimestamp)
                 .openPrice(openQuote.price())
                 .closeTimestamp(closeTimestamp)
-                .closingPrice(closeQuote.price())
+                .closePrice(closeQuote.price())
                 .highPrice(maxPrice)
                 .lowPrice(minPrice)
                 .build());

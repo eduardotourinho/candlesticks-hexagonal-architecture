@@ -19,7 +19,7 @@ public class CandlestickResponse {
         String openTimestamp;
         String closeTimestamp;
         Double openPrice;
-        Double closingPrice;
+        Double closePrice;
         Double highPrice;
         Double lowPrice;
     }

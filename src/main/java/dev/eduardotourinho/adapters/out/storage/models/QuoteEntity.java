@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
-import org.springframework.data.annotation.CreatedDate;
-
 import java.time.Instant;
 import java.util.UUID;
 
@@ -29,6 +27,5 @@ public class QuoteEntity {
 
     double price;
 
-    @CreatedDate
     Instant timestamp;
 }

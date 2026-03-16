@@ -1,0 +1,223 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: candlestick-platform
+  description: Platform for real-time financial instrument candlestick aggregation.
+  annotations:
+    github.com/project-slug: eduardotourinho/candlesticks-hexagonal-architecture
+  tags:
+    - java
+    - spring-boot
+    - hexagonal-architecture
+spec:
+  owner: user:default/eduardo-tourinho
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: candlesticks
+  description: Candlestick aggregation service demonstrating hexagonal architecture, consuming real-time instrument and quote streams via WebSocket and exposing OHLC candlesticks via REST.
+  annotations:
+    github.com/project-slug: eduardotourinho/candlesticks-hexagonal-architecture
+    backstage.io/techdocs-ref: dir:.
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/actuator/prometheus"
+    prometheus.io/port: "8080"
+  links:
+    - url: https://github.com/eduardotourinho/candlesticks-hexagonal-architecture
+      title: GitHub
+      icon: github
+  tags:
+    - java
+    - spring-boot
+    - hexagonal-architecture
+    - websocket
+    - h2
+spec:
+  type: service
+  owner: user:default/eduardo-tourinho
+  lifecycle: experimental
+  system: candlestick-platform
+  dependsOn:
+    - resource:default/candlestick-db
+  providesApis:
+    - candlesticks-api
+  consumesApis:
+    - partner-streams-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: candlestick-db
+  description: Embedded H2 database storing instruments and their quote history for candlestick aggregation.
+  tags:
+    - h2
+    - sql
+    - embedded
+spec:
+  type: database
+  owner: user:default/eduardo-tourinho
+  system: candlestick-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: candlesticks-api
+  description: REST API for retrieving OHLC candlestick aggregations for a given instrument (ISIN) over the past 30 minutes.
+  tags:
+    - rest
+    - openapi
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: user:default/eduardo-tourinho
+  system: candlestick-platform
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Candlesticks API
+      version: "1.0"
+    paths:
+      /candlesticks:
+        get:
+          summary: Get candlesticks for an instrument
+          operationId: getCandlesticks
+          parameters:
+            - name: isin
+              in: query
+              required: true
+              description: ISIN of the instrument (e.g. US0378331005)
+              schema:
+                type: string
+                pattern: '^[A-Z]{2}[A-Z0-9]{9}[0-9]$'
+          responses:
+            "200":
+              description: Candlestick aggregations for the past 30 minutes
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/CandlestickResponse'
+            "400":
+              description: Invalid ISIN format
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorResponse'
+            "404":
+              description: Instrument not found
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorResponse'
+    components:
+      schemas:
+        CandlestickResponse:
+          type: object
+          properties:
+            candlesticks:
+              type: array
+              items:
+                $ref: '#/components/schemas/Candlestick'
+        Candlestick:
+          type: object
+          properties:
+            openTimestamp:
+              type: string
+              format: date-time
+              example: "2023-04-21T13:04:00Z"
+            closeTimestamp:
+              type: string
+              format: date-time
+              example: "2023-04-21T13:05:00Z"
+            openPrice:
+              type: number
+              format: double
+            closePrice:
+              type: number
+              format: double
+            highPrice:
+              type: number
+              format: double
+            lowPrice:
+              type: number
+              format: double
+        ErrorResponse:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "INSTRUMENT_NOT_FOUND"
+            message:
+              type: string
+              example: "Instrument not found: US0378331005"
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: partner-streams-api
+  description: WebSocket streams provided by the partner service, delivering real-time instrument lifecycle events and quote price updates.
+  tags:
+    - websocket
+    - asyncapi
+spec:
+  type: asyncapi
+  lifecycle: experimental
+  owner: user:default/eduardo-tourinho
+  system: candlestick-platform
+  definition: |
+    asyncapi: "2.6.0"
+    info:
+      title: Partner Streams API
+      version: "1.0"
+    servers:
+      partner:
+        url: ws://localhost:8032
+        protocol: ws
+    channels:
+      /instruments:
+        description: Instrument lifecycle events (ADD/DELETE).
+        subscribe:
+          message:
+            oneOf:
+              - name: AddInstrumentEvent
+                payload:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum: [ADD]
+                    data:
+                      type: object
+                      properties:
+                        isin:
+                          type: string
+                        description:
+                          type: string
+              - name: DeleteInstrumentEvent
+                payload:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum: [DELETE]
+                    data:
+                      type: object
+                      properties:
+                        isin:
+                          type: string
+      /quotes:
+        description: Real-time instrument price quote events.
+        subscribe:
+          message:
+            name: QuoteEvent
+            payload:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    isin:
+                      type: string
+                    price:
+                      type: number
+                      format: double

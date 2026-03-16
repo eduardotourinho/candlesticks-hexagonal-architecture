@@ -4,21 +4,21 @@ import dev.eduardotourinho.adapters.out.storage.models.InstrumentEntity;
 import dev.eduardotourinho.adapters.out.storage.models.QuoteEntity;
 import dev.eduardotourinho.adapters.out.storage.repositories.InstrumentRepository;
 import dev.eduardotourinho.adapters.out.storage.repositories.QuoteRepository;
+import dev.eduardotourinho.application.exceptions.InstrumentAlreadyExistsException;
+import dev.eduardotourinho.application.exceptions.InstrumentNotFoundException;
 import dev.eduardotourinho.application.models.Quote;
 import dev.eduardotourinho.application.ports.out.InstrumentManagerPort;
 import dev.eduardotourinho.application.ports.out.QuoteFinderPort;
 import dev.eduardotourinho.application.ports.out.QuoteManagerPort;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InstrumentStorageManager implements InstrumentManagerPort, QuoteManagerPort, QuoteFinderPort {
@@ -32,8 +32,7 @@ public class InstrumentStorageManager implements InstrumentManagerPort, QuoteMan
         var instrument = instrumentRepository.findByIsin(isin);
 
         if (instrument.isPresent()) {
-            log.error("Instrument {} already exist", isin);
-            return;
+            throw new InstrumentAlreadyExistsException(isin);
         }
 
         var newInstrument = InstrumentEntity.builder()
@@ -51,8 +50,7 @@ public class InstrumentStorageManager implements InstrumentManagerPort, QuoteMan
         var instrument = instrumentRepository.findByIsin(isin);
 
         if (instrument.isEmpty()) {
-            log.error("Instrument {} does not exist", isin);
-            return;
+            throw new InstrumentNotFoundException(isin);
         }
 
         instrumentRepository.delete(instrument.get());
@@ -63,8 +61,7 @@ public class InstrumentStorageManager implements InstrumentManagerPort, QuoteMan
     public void saveQuote(String isin, double price, Instant timestamp) {
         var instrument = instrumentRepository.findByIsin(isin);
         if (instrument.isEmpty()) {
-            log.error("Couldn't save quote: ISIN {} does not exist", isin);
-            return;
+            throw new InstrumentNotFoundException(isin);
         }
 
         var quoteEntity = QuoteEntity.builder()
@@ -80,8 +77,7 @@ public class InstrumentStorageManager implements InstrumentManagerPort, QuoteMan
     public List<Quote> fetchQuotes(String isin, Instant initialTimestamp, Instant endTimestamp) {
         var instrument = instrumentRepository.findByIsin(isin);
         if (instrument.isEmpty()) {
-            log.error("Instrument {} doesn't exist", isin);
-            return List.of();
+            throw new InstrumentNotFoundException(isin);
         }
 
         var quoteEntities = quoteRepository.findByIsinAndTimestamp(instrument.get().getIsin(), initialTimestamp,

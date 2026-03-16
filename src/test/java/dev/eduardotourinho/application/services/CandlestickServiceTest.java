@@ -71,7 +71,7 @@ class CandlestickServiceTest {
                 .openTimestamp(Instant.parse("2023-04-21T12:01:00.00Z"))
                 .closeTimestamp(Instant.parse("2023-04-21T12:02:00.00Z"))
                 .openPrice(10.0)
-                .closingPrice(23.3)
+                .closePrice(23.3)
                 .highPrice(25.0)
                 .lowPrice(9.0)
                 .build();
@@ -139,7 +139,7 @@ class CandlestickServiceTest {
                         .openTimestamp(Instant.parse(String.format("2023-04-21T12:%02d:00.00Z", (seconds / 59) - 1)))
                         .closeTimestamp(Instant.parse(String.format("2023-04-21T12:%02d:00.00Z", seconds / 59)))
                         .openPrice(15.0)
-                        .closingPrice(15.0)
+                        .closePrice(15.0)
                         .highPrice(15.0)
                         .lowPrice(15.0)
                         .build();
@@ -189,7 +189,7 @@ class CandlestickServiceTest {
                 .openTimestamp(Instant.parse("2023-04-21T12:01:00.00Z"))
                 .closeTimestamp(Instant.parse("2023-04-21T12:02:00.00Z"))
                 .openPrice(10.0)
-                .closingPrice(23.3)
+                .closePrice(23.3)
                 .highPrice(25.0)
                 .lowPrice(9.0)
                 .build();
@@ -198,7 +198,7 @@ class CandlestickServiceTest {
                 .openTimestamp(Instant.parse("2023-04-21T12:02:00.00Z"))
                 .closeTimestamp(Instant.parse("2023-04-21T12:03:00.00Z"))
                 .openPrice(103.0)
-                .closingPrice(212.0)
+                .closePrice(212.0)
                 .highPrice(233.0)
                 .lowPrice(90.0)
                 .build();
@@ -207,7 +207,7 @@ class CandlestickServiceTest {
                 .openTimestamp(Instant.parse("2023-04-21T12:05:00.00Z"))
                 .closeTimestamp(Instant.parse("2023-04-21T12:06:00.00Z"))
                 .openPrice(189.0)
-                .closingPrice(300.)
+                .closePrice(300.)
                 .highPrice(300.)
                 .lowPrice(160.)
                 .build();
@@ -216,7 +216,7 @@ class CandlestickServiceTest {
                 .openTimestamp(Instant.parse("2023-04-21T12:07:00.00Z"))
                 .closeTimestamp(Instant.parse("2023-04-21T12:08:00.00Z"))
                 .openPrice(189.0)
-                .closingPrice(300.)
+                .closePrice(300.)
                 .highPrice(300.)
                 .lowPrice(160.)
                 .build();

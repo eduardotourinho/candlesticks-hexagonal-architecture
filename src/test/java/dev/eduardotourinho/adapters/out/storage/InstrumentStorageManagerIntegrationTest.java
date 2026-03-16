@@ -4,13 +4,11 @@ import dev.eduardotourinho.adapters.out.storage.models.InstrumentEntity;
 import dev.eduardotourinho.adapters.out.storage.models.QuoteEntity;
 import dev.eduardotourinho.adapters.out.storage.repositories.InstrumentRepository;
 import dev.eduardotourinho.adapters.out.storage.repositories.QuoteRepository;
+import dev.eduardotourinho.application.exceptions.InstrumentNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.system.CapturedOutput;
-import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
@@ -19,7 +17,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(OutputCaptureExtension.class)
 @ActiveProfiles("integration-test")
 @SpringBootTest
 class InstrumentStorageManagerIntegrationTest {
@@ -96,10 +93,8 @@ class InstrumentStorageManagerIntegrationTest {
     }
 
     @Test
-    void shouldLogErrorWhenDeleteInstrumentNotExist(CapturedOutput output) {
-        subject.deleteInstrument("ABC");
-
-        assertTrue(output.getOut().contains("Instrument ABC does not exist"));
+    void shouldThrowWhenDeleteInstrumentNotExist() {
+        assertThrows(InstrumentNotFoundException.class, () -> subject.deleteInstrument("ABC"));
     }
 
     @Test
@@ -116,10 +111,8 @@ class InstrumentStorageManagerIntegrationTest {
     }
 
     @Test
-    void shouldLogErrorWhenAddQuotesToNonExistentInstrument(CapturedOutput output) {
-        subject.saveQuote("ABC", 40.2, Instant.now());
-
-        assertTrue(output.getOut().contains("Couldn't save quote: ISIN ABC does not exist"));
+    void shouldThrowWhenAddQuotesToNonExistentInstrument() {
+        assertThrows(InstrumentNotFoundException.class, () -> subject.saveQuote("ABC", 40.2, Instant.now()));
     }
 
     @Test
@@ -147,22 +140,12 @@ class InstrumentStorageManagerIntegrationTest {
     }
 
     @Test
-    void shouldLogErrorIfInstrumentNotFoundWhenFindingQuotes(CapturedOutput output) {
+    void shouldThrowIfInstrumentNotFoundWhenFindingQuotes() {
         var startTimestamp = Instant.parse("2023-04-23T13:30:00.00Z");
         var endTimestamp = Instant.parse("2023-04-23T14:00:00.00Z");
 
-        subject.addInstrument("ABC", "Test instrument");
-
-        var instrumentEntity = instrumentRepository.findByIsin("ABC");
-        assertTrue(instrumentEntity.isPresent());
-
-        var quotesToSave = getQuoteEntityList(instrumentEntity.get());
-        quoteRepository.saveAll(quotesToSave);
-
-        var actualQuotes = subject.fetchQuotes("DEF", startTimestamp, endTimestamp);
-
-        assertTrue(actualQuotes.isEmpty());
-        assertTrue(output.getOut().contains("Instrument DEF doesn't exist"));
+        assertThrows(InstrumentNotFoundException.class,
+                () -> subject.fetchQuotes("DEF", startTimestamp, endTimestamp));
     }
 
     private List<QuoteEntity> getQuoteEntityList(InstrumentEntity instrumentEntity) {
